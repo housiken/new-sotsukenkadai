@@ -17,7 +17,7 @@ public class HomeRestController {
         if (file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(".java")) {
             return "javaファイルを選択してください！";
         }
-
+        // commet
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String content = reader.lines().collect(Collectors.joining("\n"));
             return "受け取ったファイルの内容:\n" + content;
@@ -27,6 +27,6 @@ public class HomeRestController {
     }
 }
 
-return
+
 
 

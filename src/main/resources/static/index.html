@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>javaファイルアップロード</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+</head>
+<body>
+<h1>JAVAファイルアップロード</h1>
+<input type="file" id="fileInput" accept=".java">
+<button id="uploadButton">アップロード</button>
+<pre id="fileContent"><code class="language-xml"></code></pre>
+
+<script>
+    document.getElementById('uploadButton').addEventListener('click', function () {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (!file || !file.name.endsWith('.java')) {
+            alert('javaファイルを選択してください！');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/uploadFile', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(data => {
+                const fileContentElement = document.getElementById('fileContent').querySelector('code');
+                fileContentElement.textContent = data;
+                Prism.highlightElement(fileContentElement);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('ファイルのアップロード中にエラーが発生しました');
+            });
+    });
+</script>
+</body>
+</html>

@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>jp.gihyo.projava</groupId>
-	<artifactId>0</artifactId>
+	<artifactId>New-Space</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tasklist</name>
 	<description>Spring Bootを使ったタスク管理アプリケーション</description>

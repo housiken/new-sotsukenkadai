@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background-color: #4CAF50;
+    background-color: #af4c61;
     color: white;
     padding: 1rem;
     text-align: center;
@@ -44,7 +44,7 @@ table {
 }
 
 table th, table td {
-    border: 1px solid #ddd;
+    border: 1px solid #c92121;
     padding: 8px;
     text-align: left;
 }
@@ -55,9 +55,44 @@ table th {
 }
 
 table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #3c3434;
 }
 
 table tr:hover {
-    background-color: #ddd;
+    background-color: #fcfcfc;
+}
+/* styles.css - 优化代码显示区域 */
+pre {
+    background-color: #2d2d2d; /* 深色背景 */
+    color: #f8f8f2; /* 浅色文字 */
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    overflow-x: auto;
+    line-height: 1.5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #444;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    color: #f1fa8c;
+}
+
+.token.keyword {
+    color: #ff79c6;
+    font-weight: bold;
+}
+
+.token.string {
+    color: #50fa7b;
+}
+
+.token.comment {
+    color: #6272a4;
+    font-style: italic;
+}
+
+.token.function {
+    color: #8be9fd;
 }

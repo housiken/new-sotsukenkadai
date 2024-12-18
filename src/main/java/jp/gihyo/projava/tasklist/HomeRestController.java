@@ -1,5 +1,7 @@
 package jp.gihyo.projava.tasklist;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.Patch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,10 +11,6 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import difflib.DiffUtils;
-import difflib.Patch;
-
 
 @RestController
 public class HomeRestController {
@@ -52,8 +50,8 @@ public class HomeRestController {
             patch.getDeltas().forEach(delta -> {
                 diffResult.append("====\n")
                         .append("差分タイプ: ").append(delta.getType()).append("\n")
-                        .append("差分内容: ").append(delta.getOriginal().getLines()).append("\n")
-                        .append("修正した内容: ").append(delta.getRevised().getLines()).append("\n");
+                        .append("差分内容: ").append(delta.getSource().getLines()).append("\n")
+                        .append("修正した内容: ").append(delta.getTarget().getLines()).append("\n");
             });
 
             return diffResult.toString();

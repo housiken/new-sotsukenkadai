@@ -1,57 +1,170 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({startOnLoad: true});
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>javaファイルアップロードと比較</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <title>Javaツール</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
         }
-        h1, h2 {
-            color: #333;
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        pre {
-            background: #f4f4f4;
-            border: 1px solid #ddd;
-            padding: 10px;
-            overflow-x: auto;
+        .navbar button {
+            background: #ffffff;
+            color: #4e54c8;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .navbar button:hover {
+            background: #4e54c8;
+            color: white;
         }
         .section {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+        .section.active {
+            display: block;
+        }
+        h1 {
+            color: #4e54c8;
+            text-align: center;
             margin-bottom: 20px;
         }
+        pre {
+            background: #eef2f7;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
         button {
-            margin-top: 10px;
-            padding: 5px 10px;
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background: #8f94fb;
+            color: white;
+            border: none;
+            border-radius: 5px;
             font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #4e54c8;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-<h1>JAVAファイルアップロードと比較</h1>
 
-<!-- 一つファイルのアップロード部分 -->
-<div class="section">
-    <h2>単一ファイルの内容表示</h2>
+<div class="navbar">
+    <button data-target="uploadSection">ファイルアップロード</button>
+    <button data-target="compareSection">ファイル比較</button>
+    <button data-target="convertSection">ファイル変換</button>
+    <button data-target="flowchartSection">フロー図生成</button>
+</div>
+
+<div id="flowchartSection" class="section">
+    <h1>フロー図生成</h1>
+    <textarea id="flowchartText" rows="10" cols="50" placeholder="ここにフロー図のコードを入力してください"></textarea>
+    <button id="generateFlowchartButton">フロー図生成</button>
+    <div id="flowchartOutput" class="mermaid"></div>
+</div>
+
+<div id="uploadSection" class="section active">
+    <h1>ファイルアップロード</h1>
     <input type="file" id="fileInput" accept=".java">
     <button id="uploadButton">アップロード</button>
     <pre id="fileContent"><code class="language-java"></code></pre>
 </div>
 
-<!-- 二つファイルを比べる -->
-<div class="section">
-    <h2>2つのファイル比較</h2>
+<div id="compareSection" class="section">
+    <h1>ファイル比較</h1>
     <input type="file" id="fileInput1" accept=".java"> ファイル1<br><br>
     <input type="file" id="fileInput2" accept=".java"> ファイル2<br><br>
     <button id="compareButton">ファイル比較</button>
     <pre id="compareResult"><code class="language-diff"></code></pre>
 </div>
 
+<div id="convertSection" class="section">
+    <h1>ファイル形式変換</h1>
+    <input type="file" id="convertFileInput" accept=".java">
+    <select id="convertFormat">
+        <option value="txt">TXT形式</option>
+        <option value="pdf">PDF形式</option>
+    </select>
+    <button id="convertButton">変換</button>
+    <a id="downloadLink" style="display: none;">ダウンロードリンク</a>
+</div>
+
 <script>
-    // 一つファイル内容を表示する
+    // ナビゲーションボタンでセクション切り替え
+    document.querySelectorAll('.navbar button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(button.dataset.target).classList.add('active');
+        });
+    });
+
+    // フロー図生成
+    document.getElementById('generateFlowchartButton').addEventListener('click', function () {
+        const flowchartCode = document.getElementById('flowchartText').value;
+
+        if (!flowchartCode.trim()) {
+            alert('プロセス図コードを入力してください！');
+            return;
+        }
+
+        fetch('/generateFlowchart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ flowchartCode: flowchartCode })
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('flowchartOutput').textContent = data;
+                mermaid.contentLoaded();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('フロー図生成中にエラーが発生しました');
+            });
+    });
+
+    // ファイルアップロード
     document.getElementById('uploadButton').addEventListener('click', function () {
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -72,7 +185,7 @@
             .then(data => {
                 const fileContentElement = document.getElementById('fileContent').querySelector('code');
                 fileContentElement.textContent = data;
-                Prism.highlightElement(fileContentElement);
+                hljs.highlightElement(fileContentElement);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -80,7 +193,7 @@
             });
     });
 
-    // 比较两个文件
+    // ファイル比較
     document.getElementById('compareButton').addEventListener('click', function () {
         const fileInput1 = document.getElementById('fileInput1');
         const fileInput2 = document.getElementById('fileInput2');
@@ -105,14 +218,56 @@
             .then(data => {
                 const compareResultElement = document.getElementById('compareResult').querySelector('code');
                 compareResultElement.textContent = data;
-                Prism.highlightElement(compareResultElement);
+                hljs.highlightElement(compareResultElement);
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('ファイル比較中にエラーが発生しました');
             });
     });
+
+    // ファイル変換
+    document.getElementById('convertButton').addEventListener('click', function () {
+        const fileInput = document.getElementById('convertFileInput');
+        const format = document.getElementById('convertFormat').value;
+        const file = fileInput.files[0];
+
+        if (!file || !file.name.endsWith('.java')) {
+            alert('javaファイルを選択してください！');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('format', format);
+
+        fetch('/convertFile', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('変換中にエラーが発生しました');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const downloadLink = document.getElementById('downloadLink');
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download = file.name.replace('.java', `.${format}`);
+                downloadLink.style.display = 'inline';
+                downloadLink.textContent = 'ダウンロードリンク';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('ファイルの変換中にエラーが発生しました');
+            });
+    });
 </script>
+
 </body>
 </html>
+
+
 
